@@ -31,7 +31,7 @@ def on_connect(client, userdata, flags, rc):
         publish(client, userdata, PUSH_ALL)
     else:
         logging.error(f"Failed to connect with result code {rc}")
-        client.reconnect_delay_set(30, 30)  # set reconnect delay to 30 seconds
+        client.reconnect_delay_set(30, 30)
         client.loop_stop()
         attempt_reconnect(client)
 
@@ -41,10 +41,10 @@ def attempt_reconnect(client):
         try:
             client.connect(client._host, client._port, 60)
             client.loop_forever()
-            break  # exit loop if connect succeeds
+            break
         except Exception as e:
             logging.error(f"Reconnection failed: {e}")
-            time.sleep(30)  # wait for 30 seconds before trying to reconnect
+            time.sleep(30)
 
 def on_disconnect(client, userdata, rc):
     logging.warning("Disconnected from MQTT server with result code {}".format(str(rc)))
@@ -68,7 +68,7 @@ def process_message(data, callback_notifier):
                 msg_text = f"Print Status: {gcode_state} at {percent_done}% completion."
                 send_notification(callback_notifier, msg_text)
 
-process_message.previous_state = 'NULL'  # Init blank
+process_message.previous_state = 'NULL' # Default value
 
 def send_notification(callback_notifier, message):
     logging.info(message)
@@ -98,23 +98,27 @@ def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info("Starting Bambu Labs printer monitor")
 
-    client = paho.Client(userdata={
-        'device_id': args.device_id,
-        'callback_notifier': args.callback_notifier
-    })
-    client.tls_set(cert_reqs=ssl.CERT_NONE)
-    client.tls_insecure_set(True)
-    client.username_pw_set(args.user, args.password)
-    client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
-    client.on_message = on_message
-    client.connect(args.host, args.port, 60)
-
-    try:
-        client.loop_forever()
-    except KeyboardInterrupt:
-        logging.info("Program terminated by user")
-        sys.exit(0)
+    while True:
+        try:
+            client = paho.Client(userdata={
+                'device_id': args.device_id,
+                'callback_notifier': args.callback_notifier
+            })
+            client.tls_set(cert_reqs=ssl.CERT_NONE)
+            client.tls_insecure_set(True)
+            client.username_pw_set(args.user, args.password)
+            client.on_connect = on_connect
+            client.on_disconnect = on_disconnect
+            client.on_message = on_message
+            client.connect(args.host, args.port, keepalive=60, bind_address="", bind_port=0)
+            client.loop_forever()
+        except KeyboardInterrupt:
+            logging.info("Program terminated by user")
+            sys.exit(0)
+        except Exception as e:
+            logging.error(f"An unexpected error occurred: {e}")
+            logging.info("Retrying in 30 seconds...")
+            time.sleep(30)
 
 if __name__ == "__main__":
     main()
