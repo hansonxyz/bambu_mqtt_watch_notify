@@ -1,6 +1,6 @@
 ### Bambu Labs LAN printer monitor / notifier
 
-This is a simple monitor script that will call an executable whenever your bambu labs printer changes state from RUNNING to anything else (for example FAILED). 
+This is a simple monitor script that will call an executable whenever your bambu labs printer changes state from "RUNNING" to anything else - for example, "FAILED". 
 
 Call the script like this:
 
