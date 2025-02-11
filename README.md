@@ -15,3 +15,5 @@ For your convienence, here is the dependencies to install on an ubuntu 22.04 sys
     pip3 install -U paho-mqtt chump python-dateutil datetime tzlocal
 
 This was developed for an X1C printer running X1Plus.  It should work on any other bambu printer operating in LAN only mode.  I am unsure if this will work with the new "Bambu Connect" firmware requirements, this software assumes you have a pre Jan 2025 firmware installed on your printer.
+
+HansonXYZ 2025
