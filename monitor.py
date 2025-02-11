@@ -59,7 +59,7 @@ def process_message(data, callback_notifier):
         gcode_state = print_info.get('gcode_state', '')
         percent_done = print_info.get('mc_percent', 0)
         previous_state = process_message.previous_state
-        if gcode_state != previous_state:
+        if gcode_state != previous_state and gcode_state != '':
             print(f"Transition from {previous_state} to {gcode_state} at {percent_done}%")
             process_message.previous_state = gcode_state
             if previous_state == 'RUNNING' and gcode_state != 'RUNNING':
