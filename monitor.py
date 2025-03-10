@@ -11,7 +11,6 @@ from datetime import datetime
 import tzlocal
 
 PUSH_ALL = {"pushing": {"sequence_id": "0", "command": "pushall"}}
-RESUME = {"print": {"sequence_id": "0", "command": "resume"}}
 
 def publish(client, userdata, msg):
     result = client.publish(f"device/{userdata['device_id']}/request", json.dumps(msg))
